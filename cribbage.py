@@ -1,6 +1,4 @@
 import random
-
-
 class Card():
     ranks = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
     suits = ["Clubs", "Diamonds", "Hearts", "Spades"]
@@ -31,13 +29,11 @@ class Deck():
             for suit in range(0, 4):
                 self.cards.append(Card(rank, suit))
 
-
-
-    # def __str__(self):
-    #     s = ""
-    #     for i in range(len(self.cards)):
-    #         s += ", " + str(self.cards[i])
-    #     print s
+    def __str__(self):
+        s = ""
+        for i in range(len(self.cards)):
+            s = s + " " + str(self.cards[i]) + ""
+        print s
 
 aceofclubs = Card(0, 0)
 aceofdiamonds = Card(0, 1)
@@ -130,7 +126,8 @@ cards = [aceofclubs, aceofdiamonds, aceofhearts, aceofspades,
 # else:
 #     print "Card2 outranks card1."
 #
-# random.shuffle(cards)
+random.shuffle(cards)
 # print cards.pop()
 # print cards.pop()
 # print cards.pop()
+print cards.pop()
