@@ -26,11 +26,13 @@ def compare_cut(player_card, computer_card):
     test = cribbage.Card.__cmp__(player_card, computer_card)
     if test == 1:
         print "You will take the first deal."
-        classes.current_player.altturn()
+        classes.current_player.altdeal()
+        classes.opponent.altturn()
         deal_hand()
     else:
         print "Your opponent will take the first deal."
-        classes.opponent.altturn()
+        classes.opponent.altdeal()
+        classes.current_player.altturn()
         deal_hand()
 
 
@@ -52,16 +54,29 @@ def deal_hand():
 
 
 def face_up(myhand, opphand):
-    up_card = cribbage.cards.pop()
+    up_card = str(cribbage.cards.pop())
     print "The Common card is: ", up_card
+    if "Jack" in up_card:
+        if classes.current_player.dealer == "Yes":
+            for i in range(2):
+                classes.current_player.move_peg()
+            # classes.current_player.move_peg()
+            print classes.current_player.score
+            print classes.opponent.score
+        if classes.opponent.dealer == "Yes":
+            classes.opponent.move_peg()
+            classes.opponent.move_peg()
+            print classes.opponent.score
+            print classes.current_player.score
+        print "2 points!"
     play_hand(myhand, opphand)
     return up_card
 
 
 def play_hand(myhand, opphand):
-    if classes.current_player.turn == True:
+    if classes.current_player.turn == "Yes":
         display_options(myhand, opphand)
-    elif classes.opponent.turn == True:
+    elif classes.opponent.turn == "Yes":
         opponent_turn(myhand, opphand)
     return myhand, opphand
 
@@ -73,13 +88,13 @@ def display_options(myhand, opphand):
         print "[P]lay a card"
         print "say [G]o"
         print "[O]rganize hand"
-    action = raw_input(">>>")
-    if action == "P" or "p":
+    action = str(raw_input(">>>"))
+    if action == "P" or action == "p":
         play_card(myhand, opphand)
-    elif action == "G" or "g":
-        say_go()
-    elif action == "O" or "o":
-        organize_hand()
+    elif action == "G" or action == "g":
+        say_go(myhand, opphand)
+    elif action == "O" or action == "o":
+        organize_hand(myhand, opphand)
     else:
         print "Sorry, that wasn't an option."
         display_options(myhand, opphand)
@@ -116,6 +131,25 @@ def end_player_turn(myhand, opphand):
 def end_opponent_turn(myhand, opphand):
     classes.opponent.altturn()
     classes.current_player.altturn()
-    play_card(myhand, opphand)
+    display_options(myhand, opphand)
+
+
+def organize_hand(myhand, opphand):
+    for card in myhand:
+        o_hand = []
+        if cribbage.Card.__cmp__(card, card[-1]) == -1:
+            o_hand.append(myhand.pop())
+        else:
+            o_hand.append(myhand.pop(0))
+        myhand = o_hand
+        return myhand
+    display_options(myhand, opphand)
+
+
+def say_go(myhand, opphand):
+    classes.current_player.altturn()
+    classes.opponent.altturn()
+    play_hand(myhand, opphand)
+
 
 start_game()

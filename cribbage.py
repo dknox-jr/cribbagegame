@@ -126,8 +126,8 @@ cards = [aceofclubs, aceofdiamonds, aceofhearts, aceofspades,
 # else:
 #     print "Card2 outranks card1."
 #
-random.shuffle(cards)
+# random.shuffle(cards)
 # print cards.pop()
 # print cards.pop()
 # print cards.pop()
-print cards.pop()
+# print cards.pop()

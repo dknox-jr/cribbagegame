@@ -1,5 +1,5 @@
 class Player():
-    def __init__(self, turn=False, dealer=False, score=0):
+    def __init__(self, turn="No", dealer="No", score=0):
         self.score = score
         self.dealer = dealer
         self.turn = turn
@@ -7,16 +7,28 @@ class Player():
         self.crib = []
 
     def altturn(self):
-        if self.turn == False:
-            self.turn = True
-        elif self.turn == True:
-            self.turn = False
+        if self.turn == "No":
+            self.turn = "Yes"
+        elif self.turn == "Yes":
+            self.turn = "No"
 
-current_player = Player(turn=False, dealer=False, score=0)
+    def altdeal(self):
+        if self.dealer == "No":
+            self.dealer = "Yes"
+        elif self.dealer == "Yes":
+            self.dealer = "No"
+
+    def move_peg(self):
+        if self.score > 120:
+            print "You Won!"
+        else:
+            self.score += 1
+
+current_player = Player(turn="No", dealer="No", score=0)
 
 
 class Bot():
-    def __init__(self, turn=False, dealer=False, score=0):
+    def __init__(self, turn="No", dealer="No", score=0):
         self.score = score
         self.dealer = dealer
         self.turn = turn
@@ -24,12 +36,21 @@ class Bot():
         self.crib = []
 
     def altturn(self):
-        if self.turn == True:
-            self.turn = False
-        elif self.turn == False:
-            self.turn = True
+        if self.turn == "No":
+            self.turn = "Yes"
+        elif self.turn == "Yes":
+            self.turn = "No"
 
-opponent = Bot(turn=False, dealer=False, score=0)
+    def altdeal(self):
+        if self.dealer == "No":
+            self.dealer = "Yes"
+        elif self.dealer == "Yes":
+            self.dealer = "No"
+
+    def move_peg(self):
+        self.score += 1
+
+opponent = Bot(turn="No", dealer="No", score=0)
 
 
 class Round():
@@ -38,3 +59,17 @@ class Round():
         self.lcp = lcp
         self.fuc = fuc
         self.tot = tot
+
+    def next_round(self):
+        self.rid += 1
+
+    def new_lcp(self):
+        self.lcp = []
+
+    def new_fuc(self):
+        self.fuc = []
+        if len(self.fuc) > 0:
+            self.fuc.pop()
+
+    def new_tot(self):
+        self.tot += 1
