@@ -103,10 +103,20 @@ class Player():
         else:
             try:
                 if int(play) <= len(self.hand):
-                    self.played.append(self.hand.pop(int(play) - 1))
-                    cycle.lcp = self.played[-1]
-                    print "You played ", cycle.lcp
-                    self.end_turn()
+                    tried = []
+                    tried.append(self.hand.pop(int(play) - 1))
+                    if tried[0].value <= (31 - cycle.tot):
+                        self.played.append(tried.pop())
+                        cycle.lcp = self.played[-1]
+                        print "You played:", cycle.lcp
+                        cycle.new_tot(cycle.lcp.value)
+                        cycle.append_lcp_list()
+                        cycle.peg()
+                        self.end_turn()
+                    else:
+                        print "That card is too big to play!"
+                        self.hand.append(tried.pop())
+                        self.play_card()
                 else:
                     print "Sorry, that wasn't an option."
                     self.play_card()
@@ -176,7 +186,9 @@ class Bot():
     def take_turn(self):
         self.played.append(self.hand.pop())
         cycle.lcp = self.played[-1]
-        print "Your opponent played: ", self.played[-1]
+        print "Your opponent played: ", cycle.lcp
+        cycle.new_tot(cycle.lcp.value)
+        cycle.append_lcp_list()
         self.end_turn()
 
 
@@ -216,8 +228,15 @@ class Cycle():
     def __init__(self, rid=0, fuc=None, lcp=None, tot=0):
         self.rid = rid
         self.lcp = lcp
+        self.lcp_list = []
         self.fuc = fuc
         self.tot = tot
+
+    def append_lcp_list(self):
+        self.lcp_list.append(self.lcp)
+
+    def clear_lcp_list(self):
+        self.lcp_list = []
 
     def next_round(self):
         self.rid += 1
@@ -241,8 +260,57 @@ class Cycle():
                 opponent.move_peg(2)
                 print "2 points for your opponent :("
 
-    def new_tot(self):
-        self.tot += 1
+    def new_tot(self, value):
+        self.tot += value
+
+        if self.tot == 15:
+            if player.turn == "Yes":
+                print "15 for 2 points for you!"
+                player.move_peg(2)
+            if opponent.turn == "Yes":
+                print "15 for 2 points for your opponent :("
+                opponent.move_peg(2)
+        elif self.tot == 31:
+            if player.turn == "Yes":
+                print "31 for 2 points for you!"
+                player.move_peg(2)
+            if opponent.turn == "Yes":
+                print "31 for 2 points for your opponent :("
+                opponent.move_peg(2)
+            self.tot = 0
+        print "The count is: ", self.tot
+
+    def peg(self):
+        try:
+            if self.lcp_list[-1].rank == self.lcp_list[-2].rank == self.lcp_list[-3].rank == self.lcp_list[-4].rank:
+                print "All 4!: 12 points!"
+                if player.turn == "Yes":
+                    player.move_peg(12)
+                else:
+                    opponent.move_peg(12)
+            elif self.lcp_list[-1].rank == self.lcp_list[-2].rank == self.lcp_list[-3].rank:
+                print "3 of a kind: 6 points!"
+                if player.turn == "Yes":
+                    player.move_peg(6)
+                else:
+                    opponent.move_peg(6)
+            elif self.lcp_list[-1].rank == self.lcp_list[-2].rank:
+                print "Paired up: 2 points!"
+                if player.turn == "Yes":
+                    player.move_peg(2)
+                else:
+                    opponent.move_peg(2)
+            if self.lcp_list[-1].rank == self.lcp_list[-2].rank + 1 == self.lcp_list[-3].rank + 2 or \
+                    self.lcp_list[-1].rank == self.lcp_list[-2].rank - 1 == self.lcp_list[-3].rank - 2 or \
+                    self.lcp_list[-1].rank == self.lcp_list[-2].rank + 2 == self.lcp_list[-3].rank + 1 or \
+                    self.lcp_list[-1].rank == self.lcp_list[-2].rank - 2 == self.lcp_list[-3].rank - 1:
+                print "That's 3 in a row: 3 points!"
+                if player.turn == "Yes":
+                    player.move_peg(3)
+                else:
+                    opponent.move_peg(3)
+        except IndexError:
+            player.end_turn()
 
 
 game = Game(players=1, bots=1, status=None)
